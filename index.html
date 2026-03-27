@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Number Info Finder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 10px;
+      width: 320px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      background: #22c55e;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h3>📱 Number Info</h3>
+
+  <input id="number" placeholder="Enter number">
+  <button onclick="fetchData()">Search</button>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+async function fetchData() {
+  let number = document.getElementById("number").value.trim();
+  let resultDiv = document.getElementById("result");
+
+  number = number.replace(/\D/g, '');
+
+  if (number.startsWith("91") && number.length > 10) {
+    number = number.slice(-10);
+  }
+
+  if (number.length !== 10) {
+    resultDiv.innerHTML = "⚠️ Enter valid 10-digit number";
+    return;
+  }
+
+  resultDiv.innerHTML = "⏳ Fetching...";
+
+  try {
+    let res = await fetch(`/api/get-info?number=${number}`);
+    let data = await res.json();
+
+    let html = "";
+    for (let key in data) {
+      html += `<div><b>${key}:</b> ${data[key]}</div>`;
+    }
+
+    resultDiv.innerHTML = html || "❌ No data";
+
+  } catch {
+    resultDiv.innerHTML = "❌ Error";
+  }
+}
+</script>
+
+</body>
+</html>
